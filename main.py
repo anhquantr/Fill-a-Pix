@@ -13,11 +13,9 @@ def get_combinations(a, k):
 
 
 def get_clauses(sample, i, j, k):
-    if k != 0:
+    if k > 0:
     # Đổi qua mảng string
       board = sample.astype(str)
-      # clauses = []
-      # temp = []
       neighbours = get_neighbours(board, i, j)
       negative_neighbours = []
       for i in range(len(neighbours)):
@@ -59,36 +57,39 @@ if __name__ == '__main__':
         print("File is not available!")
         exit()
     convert_to_int(convert_matrix(arr))
-    size = len(arr)
+
     col = len(arr)
     row = len(arr[0])
     puzzle = np.array(arr)
-    sample = np.reshape(range(1, size * size + 1, 1), (size, size))
-
+    sample = np.reshape(range(1, row * col + 1, 1), (row, col))
     clauses = []
     for i in range(row):
         for j in range(col):
-            if puzzle[i][j] != 0:
+            if puzzle[i][j] > 0:
                 clauses += get_clauses(sample, i, j, puzzle[i][j])
     print('#clauses:', len(clauses))
     g = Glucose3()
     for it in clauses:
         g.add_clause([int(k) for k in it])
-    print(g.solve())
-    model = g.get_model()
-    # print(model)
-    result = []
-    for i in range(row):
-        temp = []
-        for j in range(col):
-            if sample[i][j] in model:
-                print('-', end=' ')
-                temp.append('- ')
-            else:
-                print('x', end=' ')
-                temp.append('x ')
-        print('')
-        result.append(temp)
+    if g.solve() == True:
+        model = g.get_model()
+        # print(model)
+        result = []
+        for i in range(row):
+            temp = []
+            for j in range(col):
+                if sample[i][j] in model:
+                    print('-', end=' ')
+                    temp.append('- ')
+                else:
+                    print('x', end=' ')
+                    temp.append('x ')
+            print('')
+            result.append(temp)
+    else:
+        print("Puzzle khong hop le")
+        exit()
+
 
     # GUI
     win = Tk()
